@@ -96,6 +96,34 @@ def loss_fun(y, y_pred):
     
 #     return total_loss
 
+# Metrics
+def mean_iou(y_true, y_pred):
+    y_pred = tf.cast(y_pred > 0.5, tf.float32)  # Apply threshold
+    intersection = tf.reduce_sum(y_true * y_pred)
+    union = tf.reduce_sum(y_true + y_pred) - intersection
+    return (intersection + 1e-6) / (union + 1e-6)
+
+# Class-specific IoU
+def class_specific_iou(y_true, y_pred, threshold=0.5):
+    # Binarize predictions
+    y_pred_binary = tf.cast(y_pred > threshold, tf.float32)
+
+    # Background IoU (Class 0)
+    y_true_background = 1 - y_true  # Invert ground truth for background
+    y_pred_background = 1 - y_pred_binary
+    intersection_background = tf.reduce_sum(y_true_background * y_pred_background)
+    union_background = tf.reduce_sum(y_true_background + y_pred_background) - intersection_background
+    iou_background = (intersection_background + 1e-7) / (union_background + 1e-7)
+
+    # Foreground IoU (Class 1)
+    y_true_foreground = y_true
+    y_pred_foreground = y_pred_binary
+    intersection_foreground = tf.reduce_sum(y_true_foreground * y_pred_foreground)
+    union_foreground = tf.reduce_sum(y_true_foreground + y_pred_foreground) - intersection_foreground
+    iou_foreground = (intersection_foreground + 1e-7) / (union_foreground + 1e-7)
+
+    return iou_background, iou_foreground
+
 # Train Step
 @tf.function(jit_compile=True)
 def train_step(x, y):
@@ -111,9 +139,12 @@ def train_step(x, y):
 
     loss_value = tf.reduce_mean(loss)
 
-    seg_met.reset_state()
-    seg_met.update_state(y, y_pred)
-    met_value = seg_met.result()
+    # seg_met.reset_state()
+    # seg_met.update_state(y, y_pred)
+    # met_value = seg_met.result()
+
+    met_value = mean_iou(y, y_pred)
+    #iou_background, iou_foreground = class_specific_iou(y, y_pred)
 
     return loss_value, met_value
 
@@ -124,9 +155,12 @@ def val_step(x, y):
     y_pred = Unet(x, training=False)
     loss = loss_fun(y, y_pred)
 
-    seg_met.reset_state()
-    seg_met.update_state(y, y_pred)
-    met_value = seg_met.result()
+    # seg_met.reset_state()
+    # seg_met.update_state(y, y_pred)
+    # met_value = seg_met.result()
+
+    met_value = mean_iou(y, y_pred)
+    #iou_background, iou_foreground = class_specific_iou(y, y_pred)
 
     return loss, met_value
 
