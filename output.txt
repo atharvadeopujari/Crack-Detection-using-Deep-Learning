@@ -1,0 +1,1199 @@
+Microsoft Windows [Version 10.0.19042.1620]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Windows\system32>cd C:\Users\user\Desktop\Atharva Deopujari Scratch
+
+C:\Users\user\Desktop\Atharva Deopujari Scratch>python CIT_train_TIP.py
+<Policy "mixed_float16">
+<Policy "mixed_float16">
+2024-12-17 13:07:58.599811: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  AVX AVX2
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-12-17 13:07:58.714627: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 21745 MB memory:  -> device: 0, name: NVIDIA RTX A5000, pci bus id: 0000:65:00.0, compute capability: 8.6
+training size =  tf.Tensor(1612, shape=(), dtype=int64)
+validation size =  tf.Tensor(403, shape=(), dtype=int64)
+Training size = tf.Tensor(6448, shape=(), dtype=int64)
+Validation size = tf.Tensor(403, shape=(), dtype=int64)
+Model: "CIT-Unet"
+______________________________________________________________________________________________________________________________________________________
+ Layer (type)                                    Output Shape                     Param #           Connected to
+======================================================================================================================================================
+ input_1 (InputLayer)                            [(None, None, None, 1)]          0                 []
+
+ conv2d (Conv2D)                                 (None, None, None, 64)           640               ['input_1[0][0]']
+
+ conv2d_1 (Conv2D)                               (None, None, None, 64)           36928             ['conv2d[0][0]']
+
+ max_pooling2d (MaxPooling2D)                    (None, None, None, 64)           0                 ['conv2d_1[0][0]']
+
+ conv2d_2 (Conv2D)                               (None, None, None, 64)           36928             ['max_pooling2d[0][0]']
+
+ conv2d_3 (Conv2D)                               (None, None, None, 64)           36928             ['conv2d_2[0][0]']
+
+ max_pooling2d_1 (MaxPooling2D)                  (None, None, None, 64)           0                 ['conv2d_3[0][0]']
+
+ conv2d_4 (Conv2D)                               (None, None, None, 128)          73856             ['max_pooling2d_1[0][0]']
+
+ conv2d_5 (Conv2D)                               (None, None, None, 128)          147584            ['conv2d_4[0][0]']
+
+ max_pooling2d_2 (MaxPooling2D)                  (None, None, None, 128)          0                 ['conv2d_5[0][0]']
+
+ conv2d_6 (Conv2D)                               (None, None, None, 256)          295168            ['max_pooling2d_2[0][0]']
+
+ conv2d_7 (Conv2D)                               (None, None, None, 128)          295040            ['conv2d_6[0][0]']
+
+ conv2d_transpose (Conv2DTranspose)              (None, None, None, 128)          147584            ['conv2d_7[0][0]']
+
+ concatenate (Concatenate)                       (None, None, None, 256)          0                 ['conv2d_transpose[0][0]',
+                                                                                                     'conv2d_5[0][0]']
+
+ conv2d_8 (Conv2D)                               (None, None, None, 128)          295040            ['concatenate[0][0]']
+
+ conv2d_9 (Conv2D)                               (None, None, None, 64)           73792             ['conv2d_8[0][0]']
+
+ conv2d_transpose_1 (Conv2DTranspose)            (None, None, None, 64)           36928             ['conv2d_9[0][0]']
+
+ concatenate_1 (Concatenate)                     (None, None, None, 128)          0                 ['conv2d_transpose_1[0][0]',
+                                                                                                     'conv2d_3[0][0]']
+
+ conv2d_10 (Conv2D)                              (None, None, None, 64)           73792             ['concatenate_1[0][0]']
+
+ conv2d_11 (Conv2D)                              (None, None, None, 64)           36928             ['conv2d_10[0][0]']
+
+ conv2d_transpose_2 (Conv2DTranspose)            (None, None, None, 64)           36928             ['conv2d_11[0][0]']
+
+ concatenate_2 (Concatenate)                     (None, None, None, 128)          0                 ['conv2d_transpose_2[0][0]',
+                                                                                                     'conv2d_1[0][0]']
+
+ conv2d_12 (Conv2D)                              (None, None, None, 64)           73792             ['concatenate_2[0][0]']
+
+ conv2d_13 (Conv2D)                              (None, None, None, 64)           36928             ['conv2d_12[0][0]']
+
+ conv2d_14 (Conv2D)                              (None, None, None, 1)            577               ['conv2d_13[0][0]']
+
+======================================================================================================================================================
+Total params: 1,735,361
+Trainable params: 1,735,361
+Non-trainable params: 0
+______________________________________________________________________________________________________________________________________________________
+Epoch 1/120
+Learning rate =  1e-04
+2024-12-17 13:08:10.157259: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:390] Filling up shuffle buffer (this may take a while): 1130 of 2500
+2024-12-17 13:08:18.654672: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:415] Shuffle buffer filled.
+2024-12-17 13:08:20.271571: I tensorflow/compiler/xla/service/service.cc:173] XLA service 0x27fc60dfc60 initialized for platform CUDA (this does not guarantee that XLA will be used). Devices:
+2024-12-17 13:08:20.271650: I tensorflow/compiler/xla/service/service.cc:181]   StreamExecutor device (0): NVIDIA RTX A5000, Compute Capability 8.6
+2024-12-17 13:08:20.329181: I tensorflow/compiler/mlir/tensorflow/utils/dump_mlir_util.cc:268] disabling MLIR crash reproducer, set env var `MLIR_CRASH_REPRODUCER_DIRECTORY` to enable.
+2024-12-17 13:08:20.451214: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_non_negative/assert_less_equal/Assert/AssertGuard/Assert
+2024-12-17 13:08:20.452725: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_non_negative_1/assert_less_equal/Assert/AssertGuard/Assert
+2024-12-17 13:08:20.454662: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_less/Assert/AssertGuard/Assert
+2024-12-17 13:08:20.456413: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_less_1/Assert/AssertGuard/Assert
+2024-12-17 13:08:20.812450: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator cond_1/Adam/PiecewiseConstant/case/Assert/AssertGuard/Assert
+2024-12-17 13:08:20.955828: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8906
+2024-12-17 13:09:35.426041: I tensorflow/stream_executor/cuda/cuda_dnn.cc:5025] Disabling cuDNN frontend for the following convolution:
+  input: {count: 16 feature_map_count: 64 spatial: 512 640  value_min: 0.000000 value_max: 0.000000 layout: BatchYXDepth}
+  filter: {output_feature_map_count: 1 input_feature_map_count: 64 layout: OutputYXInput shape: 3 3 }
+  {zero_padding: 1 1  pad_alignment: default filter_strides: 1 1  dilation_rates: 1 1 }
+  ... because it uses an identity activation.
+2024-12-17 13:09:48.720166: W tensorflow/compiler/xla/service/gpu/nvptx_helper.cc:56] Can't find libdevice directory ${CUDA_DIR}/nvvm/libdevice. This may result in compilation or runtime failures, if the program we try to run uses routines from libdevice.
+Searched for CUDA in the following directories:
+  ./cuda_sdk_lib
+  C:/Program Files/NVIDIA GPU Computing Toolkit/CUDA/v11.2
+  /usr/local/cuda
+  .
+You can choose the search directory by setting xla_gpu_cuda_data_dir in HloModule's DebugOptions.  For most apps, setting the environment variable XLA_FLAGS=--xla_gpu_cuda_data_dir=/path/to/cuda will work.
+2024-12-17 13:09:51.733713: I tensorflow/compiler/jit/xla_compilation_cache.cc:476] Compiled cluster using XLA!  This line is logged at most once for the lifetime of the process.
+loss = [0.07201776]
+mIOU = [0.49034296]
+2024-12-17 13:11:53.063381: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:390] Filling up shuffle buffer (this may take a while): 1081 of 2500
+2024-12-17 13:12:02.602542: I tensorflow/core/kernels/data/shuffle_dataset_op.cc:415] Shuffle buffer filled.
+2024-12-17 13:12:10.711126: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_non_negative/assert_less_equal/Assert/AssertGuard/Assert
+2024-12-17 13:12:10.713018: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_non_negative_1/assert_less_equal/Assert/AssertGuard/Assert
+2024-12-17 13:12:10.715108: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_less/Assert/AssertGuard/Assert
+2024-12-17 13:12:10.716901: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_less_1/Assert/AssertGuard/Assert
+2024-12-17 13:12:14.638014: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_non_negative/assert_less_equal/Assert/AssertGuard/Assert
+2024-12-17 13:12:14.639652: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_non_negative_1/assert_less_equal/Assert/AssertGuard/Assert
+2024-12-17 13:12:14.641620: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_less/Assert/AssertGuard/Assert
+2024-12-17 13:12:14.643264: W tensorflow/compiler/tf2xla/kernels/assert_op.cc:38] Ignoring Assert operator confusion_matrix/assert_less_1/Assert/AssertGuard/Assert
+2024-12-17 13:12:18.219644: I tensorflow/stream_executor/cuda/cuda_dnn.cc:5025] Disabling cuDNN frontend for the following convolution:
+  input: {count: 3 feature_map_count: 64 spatial: 512 640  value_min: 0.000000 value_max: 0.000000 layout: BatchYXDepth}
+  filter: {output_feature_map_count: 1 input_feature_map_count: 64 layout: OutputYXInput shape: 3 3 }
+  {zero_padding: 1 1  pad_alignment: default filter_strides: 1 1  dilation_rates: 1 1 }
+  ... because it uses an identity activation.
+
+val loss = [0.01568734]
+val mIOU = [0.49047387]
+time = 260.2334940433502
+
+Epoch 2/120
+Learning rate =  1e-04
+loss = [0.01093345]
+mIOU = [0.49034296]
+
+val loss = [0.0076216]
+val mIOU = [0.49047387]
+time = 113.96845626831055
+
+Epoch 3/120
+Learning rate =  1e-04
+loss = [0.00616239]
+mIOU = [0.49036016]
+
+val loss = [0.00508303]
+val mIOU = [0.49047387]
+time = 113.96315383911133
+
+Epoch 4/120
+Learning rate =  1e-04
+loss = [0.0045907]
+mIOU = [0.49063469]
+
+val loss = [0.00400983]
+val mIOU = [0.49123494]
+time = 113.36973333358765
+
+Epoch 5/120
+Learning rate =  1e-04
+loss = [0.00367725]
+mIOU = [0.49437278]
+
+val loss = [0.00335554]
+val mIOU = [0.49756322]
+time = 113.19713020324707
+
+Epoch 6/120
+Learning rate =  1e-04
+loss = [0.00317498]
+mIOU = [0.50170262]
+
+val loss = [0.00295815]
+val mIOU = [0.50755557]
+time = 113.40073323249817
+
+Epoch 7/120
+Learning rate =  1e-04
+loss = [0.00308992]
+mIOU = [0.50486055]
+
+val loss = [0.00302397]
+val mIOU = [0.50152922]
+time = 113.55906844139099
+
+Epoch 8/120
+Learning rate =  1e-04
+loss = [0.00286582]
+mIOU = [0.50954206]
+
+val loss = [0.00279211]
+val mIOU = [0.50879868]
+time = 113.26083636283875
+
+Epoch 9/120
+Learning rate =  1e-04
+loss = [0.00254744]
+mIOU = [0.51496374]
+
+val loss = [0.00256174]
+val mIOU = [0.50865318]
+time = 113.15770840644836
+
+Epoch 10/120
+Learning rate =  1e-04
+loss = [0.00244311]
+mIOU = [0.52063494]
+
+val loss = [0.00251606]
+val mIOU = [0.51129596]
+time = 112.8390245437622
+
+Epoch 11/120
+Learning rate =  1e-04
+loss = [0.00229466]
+mIOU = [0.52249367]
+
+val loss = [0.00237411]
+val mIOU = [0.51615137]
+time = 113.29582834243774
+
+Epoch 12/120
+Learning rate =  1e-04
+loss = [0.00221359]
+mIOU = [0.52506076]
+
+val loss = [0.0022256]
+val mIOU = [0.52053259]
+time = 112.892507314682
+
+Epoch 13/120
+Learning rate =  1e-04
+loss = [0.00624176]
+mIOU = [0.52309886]
+
+val loss = [0.0170391]
+val mIOU = [0.49047387]
+time = 112.85571932792664
+
+Epoch 14/120
+Learning rate =  1e-04
+loss = [0.00567993]
+mIOU = [0.49150673]
+
+val loss = [0.00350199]
+val mIOU = [0.49198261]
+time = 112.90755271911621
+
+Epoch 15/120
+Learning rate =  1e-04
+loss = [0.00288232]
+mIOU = [0.49777513]
+
+val loss = [0.00260541]
+val mIOU = [0.50375699]
+time = 112.98217940330505
+
+Epoch 16/120
+Learning rate =  1e-04
+loss = [0.002319]
+mIOU = [0.51101357]
+
+val loss = [0.00230193]
+val mIOU = [0.51790455]
+time = 112.93653702735901
+
+Epoch 17/120
+Learning rate =  1e-04
+loss = [0.00211623]
+mIOU = [0.51581924]
+
+val loss = [0.00216183]
+val mIOU = [0.51502828]
+time = 112.58906841278076
+
+Epoch 18/120
+Learning rate =  1e-04
+loss = [0.00201222]
+mIOU = [0.51901409]
+
+val loss = [0.00204669]
+val mIOU = [0.5181371]
+time = 112.21761202812195
+
+Epoch 19/120
+Learning rate =  1e-04
+loss = [0.00196783]
+mIOU = [0.52196653]
+
+val loss = [0.00194253]
+val mIOU = [0.51872753]
+time = 112.30075120925903
+
+Epoch 20/120
+Learning rate =  1e-04
+loss = [0.00183634]
+mIOU = [0.52727792]
+
+val loss = [0.00184108]
+val mIOU = [0.521784]
+time = 112.08182787895203
+
+Epoch 21/120
+Learning rate =  1e-04
+loss = [0.0018077]
+mIOU = [0.53110999]
+
+val loss = [0.00178649]
+val mIOU = [0.5319662]
+time = 111.93089127540588
+
+Epoch 22/120
+Learning rate =  1e-04
+loss = [0.00200553]
+mIOU = [0.52799176]
+
+val loss = [0.00200808]
+val mIOU = [0.52946372]
+time = 112.10408973693848
+
+Epoch 23/120
+Learning rate =  1e-04
+loss = [0.00170661]
+mIOU = [0.54843514]
+
+val loss = [0.00171555]
+val mIOU = [0.53774068]
+time = 112.20194149017334
+
+Epoch 24/120
+Learning rate =  1e-04
+loss = [0.00165358]
+mIOU = [0.55490356]
+
+val loss = [0.00163775]
+val mIOU = [0.5396238]
+time = 111.80983209609985
+
+Epoch 25/120
+Learning rate =  1e-04
+loss = [0.00180466]
+mIOU = [0.54631025]
+
+val loss = [0.00168385]
+val mIOU = [0.54058323]
+time = 112.08848547935486
+
+Epoch 26/120
+Learning rate =  1e-04
+loss = [0.0015745]
+mIOU = [0.56626789]
+
+val loss = [0.00157851]
+val mIOU = [0.55028385]
+time = 111.54757952690125
+
+Epoch 27/120
+Learning rate =  1e-04
+loss = [0.00147994]
+mIOU = [0.5828567]
+
+val loss = [0.00157183]
+val mIOU = [0.55611506]
+time = 111.88380527496338
+
+Epoch 28/120
+Learning rate =  1e-04
+loss = [0.00142117]
+mIOU = [0.59950433]
+
+val loss = [0.00156582]
+val mIOU = [0.56414631]
+time = 111.85422801971436
+
+Epoch 29/120
+Learning rate =  1e-04
+loss = [0.0024372]
+mIOU = [0.5705123]
+
+val loss = [0.00196633]
+val mIOU = [0.55134398]
+time = 112.30518746376038
+
+Epoch 30/120
+Learning rate =  1e-04
+loss = [0.00159394]
+mIOU = [0.5847945]
+
+val loss = [0.00161288]
+val mIOU = [0.58370401]
+time = 111.46943378448486
+
+Epoch 31/120
+Learning rate =  1e-04
+loss = [0.00139933]
+mIOU = [0.60247873]
+
+val loss = [0.00157488]
+val mIOU = [0.59843626]
+time = 110.80971455574036
+
+Epoch 32/120
+Learning rate =  1e-04
+loss = [0.00132816]
+mIOU = [0.61476296]
+
+val loss = [0.00153398]
+val mIOU = [0.61134947]
+time = 111.02826857566833
+
+Epoch 33/120
+Learning rate =  1e-04
+loss = [0.00128793]
+mIOU = [0.62156626]
+
+val loss = [0.00149273]
+val mIOU = [0.61244771]
+time = 110.97981142997742
+
+Epoch 34/120
+Learning rate =  1e-04
+loss = [0.00129706]
+mIOU = [0.60610394]
+
+val loss = [0.0015506]
+val mIOU = [0.59652786]
+time = 110.95091938972473
+
+Epoch 35/120
+Learning rate =  1e-04
+loss = [0.00152898]
+mIOU = [0.58291706]
+
+val loss = [0.00144314]
+val mIOU = [0.60457736]
+time = 114.02625513076782
+
+Epoch 36/120
+Learning rate =  1e-04
+loss = [0.00125749]
+mIOU = [0.63250484]
+
+val loss = [0.00144195]
+val mIOU = [0.64673751]
+time = 112.46655583381653
+
+Epoch 37/120
+Learning rate =  1e-04
+loss = [0.0014291]
+mIOU = [0.6216694]
+
+val loss = [0.00152154]
+val mIOU = [0.6076603]
+time = 111.7117235660553
+
+Epoch 38/120
+Learning rate =  1e-04
+loss = [0.00122122]
+mIOU = [0.65078579]
+
+val loss = [0.00139139]
+val mIOU = [0.65781533]
+time = 111.19063878059387
+
+Epoch 39/120
+Learning rate =  1e-04
+loss = [0.00118392]
+mIOU = [0.66969392]
+
+val loss = [0.00151083]
+val mIOU = [0.64949304]
+time = 111.62116026878357
+
+Epoch 40/120
+Learning rate =  1e-04
+loss = [0.00118378]
+mIOU = [0.66773336]
+
+val loss = [0.00146081]
+val mIOU = [0.65617395]
+time = 111.33929371833801
+
+Epoch 41/120
+Learning rate =  1e-04
+loss = [0.00119372]
+mIOU = [0.67572936]
+
+val loss = [0.00138255]
+val mIOU = [0.66608539]
+time = 111.00048851966858
+
+Epoch 42/120
+Learning rate =  1e-04
+loss = [0.00119161]
+mIOU = [0.68117758]
+
+val loss = [0.00137508]
+val mIOU = [0.67583481]
+time = 112.58983111381531
+
+Epoch 43/120
+Learning rate =  1e-04
+loss = [0.00265869]
+mIOU = [0.6083277]
+
+val loss = [0.00148784]
+val mIOU = [0.60690055]
+time = 112.27655839920044
+
+Epoch 44/120
+Learning rate =  1e-04
+loss = [0.0012868]
+mIOU = [0.64230932]
+
+val loss = [0.00134123]
+val mIOU = [0.64661455]
+time = 111.97350788116455
+
+Epoch 45/120
+Learning rate =  1e-04
+loss = [0.00113188]
+mIOU = [0.67918643]
+
+val loss = [0.00132406]
+val mIOU = [0.68546391]
+time = 111.49836897850037
+
+Epoch 46/120
+Learning rate =  1e-04
+loss = [0.00105987]
+mIOU = [0.70939001]
+
+val loss = [0.00134054]
+val mIOU = [0.71739748]
+time = 110.87538433074951
+
+Epoch 47/120
+Learning rate =  1e-04
+loss = [0.00102002]
+mIOU = [0.7286631]
+
+val loss = [0.00136253]
+val mIOU = [0.73751981]
+time = 111.27712059020996
+
+Epoch 48/120
+Learning rate =  1e-04
+loss = [0.000986]
+mIOU = [0.74182808]
+
+val loss = [0.00142363]
+val mIOU = [0.744724]
+time = 111.66282439231873
+
+Epoch 49/120
+Learning rate =  1e-04
+loss = [0.00099024]
+mIOU = [0.74132401]
+
+val loss = [0.00141425]
+val mIOU = [0.75753469]
+time = 111.5133044719696
+
+Epoch 50/120
+Learning rate =  1e-04
+loss = [0.00101438]
+mIOU = [0.73386535]
+
+val loss = [0.00139449]
+val mIOU = [0.73634636]
+time = 111.34660482406616
+
+Epoch 51/120
+Learning rate =  1e-04
+loss = [0.00114238]
+mIOU = [0.71015765]
+
+val loss = [0.00135201]
+val mIOU = [0.71575415]
+time = 111.42670130729675
+
+Epoch 52/120
+Learning rate =  1e-04
+loss = [0.00099632]
+mIOU = [0.74551847]
+
+val loss = [0.00134697]
+val mIOU = [0.73200019]
+time = 110.75499033927917
+
+Epoch 53/120
+Learning rate =  1e-04
+loss = [0.00104917]
+mIOU = [0.72742674]
+
+val loss = [0.00143807]
+val mIOU = [0.73404379]
+time = 111.84808921813965
+
+Epoch 54/120
+Learning rate =  1e-04
+loss = [0.0010584]
+mIOU = [0.71930765]
+
+val loss = [0.00127896]
+val mIOU = [0.73013457]
+time = 111.87946796417236
+
+Epoch 55/120
+Learning rate =  1e-04
+loss = [0.00104104]
+mIOU = [0.7251127]
+
+val loss = [0.00131712]
+val mIOU = [0.75588513]
+time = 111.75230503082275
+
+Epoch 56/120
+Learning rate =  1e-04
+loss = [0.00100416]
+mIOU = [0.7396036]
+
+val loss = [0.00124472]
+val mIOU = [0.76883425]
+time = 116.00194787979126
+
+Epoch 57/120
+Learning rate =  1e-04
+loss = [0.00093496]
+mIOU = [0.77145227]
+
+val loss = [0.00127102]
+val mIOU = [0.77105347]
+time = 111.65558671951294
+
+Epoch 58/120
+Learning rate =  1e-04
+loss = [0.00118467]
+mIOU = [0.73386251]
+
+val loss = [0.00160164]
+val mIOU = [0.65801316]
+time = 114.70064902305603
+
+Epoch 59/120
+Learning rate =  1e-04
+loss = [0.00106109]
+mIOU = [0.71830659]
+
+val loss = [0.00138137]
+val mIOU = [0.7267484]
+time = 114.1804711818695
+
+Epoch 60/120
+Learning rate =  1e-04
+loss = [0.00086293]
+mIOU = [0.77640438]
+
+val loss = [0.00142605]
+val mIOU = [0.77196087]
+time = 114.19316911697388
+
+Epoch 61/120
+Learning rate =  1e-04
+loss = [0.00087438]
+mIOU = [0.78095066]
+
+val loss = [0.00112801]
+val mIOU = [0.77167235]
+time = 113.6048059463501
+
+Epoch 62/120
+Learning rate =  1e-05
+loss = [0.00083284]
+mIOU = [0.78904968]
+
+val loss = [0.00112498]
+val mIOU = [0.78249017]
+time = 114.83707571029663
+
+Epoch 63/120
+Learning rate =  1e-05
+loss = [0.00081519]
+mIOU = [0.79802272]
+
+val loss = [0.00112665]
+val mIOU = [0.79017296]
+time = 113.00015354156494
+
+Epoch 64/120
+Learning rate =  1e-05
+loss = [0.00080185]
+mIOU = [0.80470319]
+
+val loss = [0.00113147]
+val mIOU = [0.79601763]
+time = 111.40221905708313
+
+Epoch 65/120
+Learning rate =  1e-05
+loss = [0.00079035]
+mIOU = [0.81013839]
+
+val loss = [0.00113717]
+val mIOU = [0.80106851]
+time = 111.37838196754456
+
+Epoch 66/120
+Learning rate =  1e-05
+loss = [0.0007799]
+mIOU = [0.8148195]
+
+val loss = [0.00114322]
+val mIOU = [0.80538537]
+time = 112.60396695137024
+
+Epoch 67/120
+Learning rate =  1e-05
+loss = [0.00077029]
+mIOU = [0.81887597]
+
+val loss = [0.00114834]
+val mIOU = [0.80917618]
+time = 110.54259061813354
+
+Epoch 68/120
+Learning rate =  1e-05
+loss = [0.00076109]
+mIOU = [0.82241291]
+
+val loss = [0.00115371]
+val mIOU = [0.81261978]
+time = 111.09245419502258
+
+Epoch 69/120
+Learning rate =  1e-05
+loss = [0.00075252]
+mIOU = [0.82557627]
+
+val loss = [0.00115892]
+val mIOU = [0.81587473]
+time = 110.67410230636597
+
+Epoch 70/120
+Learning rate =  1e-05
+loss = [0.00074439]
+mIOU = [0.82841203]
+
+val loss = [0.00116345]
+val mIOU = [0.81884403]
+time = 112.76697111129761
+
+Epoch 71/120
+Learning rate =  1e-05
+loss = [0.00073663]
+mIOU = [0.83100739]
+
+val loss = [0.0011684]
+val mIOU = [0.8215257]
+time = 115.31742238998413
+
+Epoch 72/120
+Learning rate =  1e-05
+loss = [0.0007293]
+mIOU = [0.8334525]
+
+val loss = [0.00117298]
+val mIOU = [0.82390378]
+time = 110.7651629447937
+
+Epoch 73/120
+Learning rate =  1e-05
+loss = [0.00072232]
+mIOU = [0.83571029]
+
+val loss = [0.00117664]
+val mIOU = [0.82651758]
+time = 111.04486179351807
+
+Epoch 74/120
+Learning rate =  1e-05
+loss = [0.00071563]
+mIOU = [0.83778037]
+
+val loss = [0.00118085]
+val mIOU = [0.82886968]
+time = 110.87562704086304
+
+Epoch 75/120
+Learning rate =  1e-05
+loss = [0.00070914]
+mIOU = [0.83983645]
+
+val loss = [0.00118507]
+val mIOU = [0.83120162]
+time = 110.82035183906555
+
+Epoch 76/120
+Learning rate =  1e-05
+loss = [0.00070299]
+mIOU = [0.84179725]
+
+val loss = [0.00118925]
+val mIOU = [0.83339944]
+time = 111.327397108078
+
+Epoch 77/120
+Learning rate =  1e-05
+loss = [0.00069706]
+mIOU = [0.84361451]
+
+val loss = [0.00119331]
+val mIOU = [0.83549971]
+time = 113.78564476966858
+
+Epoch 78/120
+Learning rate =  1e-05
+loss = [0.00069129]
+mIOU = [0.84539555]
+
+val loss = [0.00119691]
+val mIOU = [0.83773096]
+time = 112.0374207496643
+
+Epoch 79/120
+Learning rate =  1e-05
+loss = [0.00068573]
+mIOU = [0.84702358]
+
+val loss = [0.0012004]
+val mIOU = [0.83965852]
+time = 113.47910714149475
+
+Epoch 80/120
+Learning rate =  1e-05
+loss = [0.00068048]
+mIOU = [0.84851623]
+
+val loss = [0.00120427]
+val mIOU = [0.84130367]
+time = 113.68434643745422
+
+Epoch 81/120
+Learning rate =  1e-05
+loss = [0.00067552]
+mIOU = [0.8499258]
+
+val loss = [0.00120818]
+val mIOU = [0.84296238]
+time = 113.60671329498291
+
+Epoch 82/120
+Learning rate =  1e-05
+loss = [0.0006707]
+mIOU = [0.85124345]
+
+val loss = [0.00121279]
+val mIOU = [0.84470135]
+time = 112.5708179473877
+
+Epoch 83/120
+Learning rate =  1e-05
+loss = [0.00066611]
+mIOU = [0.85254636]
+
+val loss = [0.00121676]
+val mIOU = [0.84622921]
+time = 114.26914405822754
+
+Epoch 84/120
+Learning rate =  1e-05
+loss = [0.0006626]
+mIOU = [0.85358965]
+
+val loss = [0.00121996]
+val mIOU = [0.84685022]
+time = 114.31000638008118
+
+Epoch 85/120
+Learning rate =  1e-05
+loss = [0.00065728]
+mIOU = [0.85481237]
+
+val loss = [0.00122623]
+val mIOU = [0.8486282]
+time = 114.06211376190186
+
+Epoch 86/120
+Learning rate =  1e-05
+loss = [0.00065372]
+mIOU = [0.85572157]
+
+val loss = [0.00122926]
+val mIOU = [0.84881354]
+time = 114.25485110282898
+
+Epoch 87/120
+Learning rate =  1e-05
+loss = [0.00065001]
+mIOU = [0.85641765]
+
+val loss = [0.00123156]
+val mIOU = [0.85075615]
+time = 114.9426052570343
+
+Epoch 88/120
+Learning rate =  1e-05
+loss = [0.00064584]
+mIOU = [0.85737095]
+
+val loss = [0.00123602]
+val mIOU = [0.85248131]
+time = 114.70291519165039
+
+Epoch 89/120
+Learning rate =  1e-05
+loss = [0.00064381]
+mIOU = [0.85792635]
+
+val loss = [0.00123418]
+val mIOU = [0.85190281]
+time = 114.06520223617554
+
+Epoch 90/120
+Learning rate =  1e-05
+loss = [0.00064036]
+mIOU = [0.85799864]
+
+val loss = [0.00124038]
+val mIOU = [0.85172808]
+time = 113.91250395774841
+
+Epoch 91/120
+Learning rate =  1e-05
+loss = [0.00066359]
+mIOU = [0.85503991]
+
+val loss = [0.00121492]
+val mIOU = [0.85545679]
+time = 114.32587337493896
+
+Epoch 92/120
+Learning rate =  1e-06
+loss = [0.00065522]
+mIOU = [0.85426503]
+
+val loss = [0.00120916]
+val mIOU = [0.85506034]
+time = 113.45960831642151
+
+Epoch 93/120
+Learning rate =  1e-06
+loss = [0.00065127]
+mIOU = [0.85403678]
+
+val loss = [0.00120616]
+val mIOU = [0.85510036]
+time = 113.05746006965637
+
+Epoch 94/120
+Learning rate =  1e-06
+loss = [0.00064851]
+mIOU = [0.85413192]
+
+val loss = [0.00120466]
+val mIOU = [0.85529056]
+time = 225.37797260284424
+
+Epoch 95/120
+Learning rate =  1e-06
+loss = [0.00064634]
+mIOU = [0.85437559]
+
+val loss = [0.00120385]
+val mIOU = [0.85559735]
+time = 111.84202885627747
+
+Epoch 96/120
+Learning rate =  1e-06
+loss = [0.00064456]
+mIOU = [0.85466563]
+
+val loss = [0.00120317]
+val mIOU = [0.85589809]
+time = 113.06868314743042
+
+Epoch 97/120
+Learning rate =  1e-06
+loss = [0.000643]
+mIOU = [0.85501509]
+
+val loss = [0.00120288]
+val mIOU = [0.85620742]
+time = 112.97870016098022
+
+Epoch 98/120
+Learning rate =  1e-06
+loss = [0.00064161]
+mIOU = [0.85537904]
+
+val loss = [0.00120287]
+val mIOU = [0.85654479]
+time = 112.63964033126831
+
+Epoch 99/120
+Learning rate =  1e-06
+loss = [0.00064036]
+mIOU = [0.85573653]
+
+val loss = [0.00120304]
+val mIOU = [0.85689886]
+time = 116.18940043449402
+
+Epoch 100/120
+Learning rate =  1e-06
+loss = [0.00063919]
+mIOU = [0.85607939]
+
+val loss = [0.00120325]
+val mIOU = [0.85718804]
+time = 123.48442506790161
+
+Epoch 101/120
+Learning rate =  1e-06
+loss = [0.0006381]
+mIOU = [0.85641807]
+
+val loss = [0.00120356]
+val mIOU = [0.85749165]
+time = 118.0781147480011
+
+Epoch 102/120
+Learning rate =  1e-06
+loss = [0.00063708]
+mIOU = [0.85676582]
+
+val loss = [0.00120407]
+val mIOU = [0.85780697]
+time = 113.9075779914856
+
+Epoch 103/120
+Learning rate =  1e-06
+loss = [0.00063612]
+mIOU = [0.8571007]
+
+val loss = [0.00120447]
+val mIOU = [0.85814399]
+time = 114.3867039680481
+
+Epoch 104/120
+Learning rate =  1e-06
+loss = [0.0006352]
+mIOU = [0.85741503]
+
+val loss = [0.00120507]
+val mIOU = [0.85843292]
+time = 113.77601981163025
+
+Epoch 105/120
+Learning rate =  1e-06
+loss = [0.00063431]
+mIOU = [0.85770994]
+
+val loss = [0.00120552]
+val mIOU = [0.85869367]
+time = 113.4596893787384
+
+Epoch 106/120
+Learning rate =  1e-06
+loss = [0.00063347]
+mIOU = [0.85799075]
+
+val loss = [0.00120601]
+val mIOU = [0.8589489]
+time = 113.53006792068481
+
+Epoch 107/120
+Learning rate =  1e-06
+loss = [0.00063266]
+mIOU = [0.8582756]
+
+val loss = [0.0012066]
+val mIOU = [0.85918547]
+time = 114.81153392791748
+
+Epoch 108/120
+Learning rate =  1e-06
+loss = [0.00063188]
+mIOU = [0.85852071]
+
+val loss = [0.00120732]
+val mIOU = [0.85941495]
+time = 114.63318657875061
+
+Epoch 109/120
+Learning rate =  1e-06
+loss = [0.00063111]
+mIOU = [0.85877229]
+
+val loss = [0.00120799]
+val mIOU = [0.85966237]
+time = 113.66400384902954
+
+Epoch 110/120
+Learning rate =  1e-06
+loss = [0.00063038]
+mIOU = [0.85901086]
+
+val loss = [0.00120845]
+val mIOU = [0.85984503]
+time = 113.819580078125
+
+Epoch 111/120
+Learning rate =  1e-06
+loss = [0.00062967]
+mIOU = [0.85925429]
+
+val loss = [0.00120929]
+val mIOU = [0.86008954]
+time = 113.82687377929688
+
+Epoch 112/120
+Learning rate =  1e-06
+loss = [0.00062894]
+mIOU = [0.85946841]
+
+val loss = [0.00120982]
+val mIOU = [0.860302]
+time = 114.09275937080383
+
+Epoch 113/120
+Learning rate =  1e-06
+loss = [0.00062825]
+mIOU = [0.85969556]
+
+val loss = [0.00121047]
+val mIOU = [0.86050021]
+time = 113.4729630947113
+
+Epoch 114/120
+Learning rate =  1e-06
+loss = [0.0006276]
+mIOU = [0.85990733]
+
+val loss = [0.00121094]
+val mIOU = [0.86069602]
+time = 115.02669429779053
+
+Epoch 115/120
+Learning rate =  1e-06
+loss = [0.00062696]
+mIOU = [0.86010088]
+
+val loss = [0.00121171]
+val mIOU = [0.86087421]
+time = 114.43122887611389
+
+Epoch 116/120
+Learning rate =  1e-06
+loss = [0.0006263]
+mIOU = [0.86029085]
+
+val loss = [0.00121213]
+val mIOU = [0.86104732]
+time = 114.85093784332275
+
+Epoch 117/120
+Learning rate =  1e-06
+loss = [0.00062565]
+mIOU = [0.86048994]
+
+val loss = [0.00121283]
+val mIOU = [0.86124229]
+time = 115.72481274604797
+
+Epoch 118/120
+Learning rate =  1e-06
+loss = [0.00062502]
+mIOU = [0.86068002]
+
+val loss = [0.00121336]
+val mIOU = [0.86141758]
+time = 116.29964113235474
+
+Epoch 119/120
+Learning rate =  1e-06
+loss = [0.0006244]
+mIOU = [0.86087141]
+
+val loss = [0.00121413]
+val mIOU = [0.86158832]
+time = 115.92552447319031
+
+Epoch 120/120
+Learning rate =  1e-06
+loss = [0.00062378]
+mIOU = [0.86104207]
+
+val loss = [0.00121477]
+val mIOU = [0.8617181]
+time = 116.28519177436829
+
+WARNING:tensorflow:Compiled the loaded model, but the compiled metrics have yet to be built. `model.compile_metrics` will be empty until you train or evaluate the model.
+
+C:\Users\user\Desktop\Atharva Deopujari Scratch>gf
