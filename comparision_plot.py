@@ -38,7 +38,7 @@ print("Validation size = " + str(val_ds.cardinality()))
 val_ds = val_ds.map(val_data, num_parallel_calls = tf.data.AUTOTUNE)
 val_ds_batched = val_ds.batch(train_batch_size)
 val_ds_batched = val_ds_batched.prefetch(buffer_size = tf.data.AUTOTUNE)
-net=keras.models.load_model('trained_model.keras', compile=False)
+net=keras.models.load_model('trained_model_v2.h5', compile=False)
 net.summary(150)
 
 
@@ -52,13 +52,27 @@ for step, (x, y) in enumerate(train_ds_batched.take(10).as_numpy_iterator()):
     print(y)
     print(z)
   
-    plt.figure("Image")
+    plt.figure(figsize=(15, 5))
+    plt.subplot(1, 3, 1)
     plt.imshow(img)
+    plt.title("Image")
 
-    plt.figure("Mask")
+    plt.subplot(1, 3, 2)
     plt.imshow(img2)
+    plt.title("Truth Mask")
 
-    plt.figure("Prediction")
+    plt.subplot(1, 3, 3)
     plt.imshow(img3)
+    plt.title("Predicted Mask")
 
     plt.show()
+    # plt.figure("Image")
+    # plt.imshow(img)
+
+    # plt.figure("Mask")
+    # plt.imshow(img2)
+
+    # plt.figure("Prediction")
+    # plt.imshow(img3)
+
+    # plt.show()
