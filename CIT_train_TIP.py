@@ -44,7 +44,7 @@ val_ds_batched = val_ds.batch(train_batch_size)
 val_ds_batched = val_ds_batched.prefetch(buffer_size = tf.data.AUTOTUNE)
 
 # Model Load
-Unet = keras.models.load_model('trained_model.keras', compile = False)
+Unet = keras.models.load_model('UNet_CIT_untrained.h5', compile = False)
 Unet.summary(150)
 
 ##training
@@ -72,8 +72,8 @@ def dice_loss(y_true, y_pred, smooth=1):
 
 def loss_fun(y, y_pred):
     
-    #bce_loss = keras.losses.BinaryCrossentropy()
-    bce_loss = keras.losses.binary_crossentropy(y, y_pred)
+    bce_loss = keras.losses.BinaryCrossentropy()(y, y_pred)
+    
     dice = dice_loss(y, y_pred)
 
     total_loss = bce_loss + dice
@@ -81,7 +81,7 @@ def loss_fun(y, y_pred):
     total_loss = tf.reduce_mean(total_loss)
 
     return total_loss
-
+#bce_loss = keras.losses.binary_crossentropy(y, y_pred)
 # bce_loss = keras.losses.BinaryCrossentropy()
 # loss_fun = bce_loss
 
@@ -97,32 +97,27 @@ def loss_fun(y, y_pred):
 #     return total_loss
 
 # Metrics
-def mean_iou(y_true, y_pred):
-    y_pred = tf.cast(y_pred > 0.5, tf.float32)  # Apply threshold
-    intersection = tf.reduce_sum(y_true * y_pred)
-    union = tf.reduce_sum(y_true + y_pred) - intersection
-    return (intersection + 1e-6) / (union + 1e-6)
+def pixel_accuracy(y_true, y_pred):
 
-# Class-specific IoU
-def class_specific_iou(y_true, y_pred, threshold=0.5):
-    # Binarize predictions
-    y_pred_binary = tf.cast(y_pred > threshold, tf.float32)
+    y_pred_binary = tf.cast(y_pred > 0.5, tf.float32)  # Binarize predictions
 
-    # Background IoU (Class 0)
-    y_true_background = 1 - y_true  # Invert ground truth for background
-    y_pred_background = 1 - y_pred_binary
-    intersection_background = tf.reduce_sum(y_true_background * y_pred_background)
-    union_background = tf.reduce_sum(y_true_background + y_pred_background) - intersection_background
-    iou_background = (intersection_background + 1e-7) / (union_background + 1e-7)
+    # Accuracy for background (class 0)
+    background_true = tf.cast(tf.equal(y_true, 0), tf.float32)
+    background_pred = tf.cast(tf.equal(y_pred_binary, 0), tf.float32)
+    background_correct = tf.reduce_sum(background_true * background_pred)
+    background_total = tf.reduce_sum(background_true)
+    background_accuracy = (background_correct + 1e-7) / (background_total + 1e-7)
 
-    # Foreground IoU (Class 1)
-    y_true_foreground = y_true
-    y_pred_foreground = y_pred_binary
-    intersection_foreground = tf.reduce_sum(y_true_foreground * y_pred_foreground)
-    union_foreground = tf.reduce_sum(y_true_foreground + y_pred_foreground) - intersection_foreground
-    iou_foreground = (intersection_foreground + 1e-7) / (union_foreground + 1e-7)
+    # Accuracy for foreground (class 1)
+    foreground_true = tf.cast(tf.equal(y_true, 1), tf.float32)
+    foreground_pred = tf.cast(tf.equal(y_pred_binary, 1), tf.float32)
+    foreground_correct = tf.reduce_sum(foreground_true * foreground_pred)
+    foreground_total = tf.reduce_sum(foreground_true)
+    foreground_accuracy = (foreground_correct + 1e-7) / (foreground_total + 1e-7)
 
-    return iou_background, iou_foreground
+    # Average accuracy
+    total_accuracy = (background_accuracy + foreground_accuracy) / 2
+    return total_accuracy
 
 # Train Step
 @tf.function(jit_compile=True)
@@ -139,14 +134,13 @@ def train_step(x, y):
 
     loss_value = tf.reduce_mean(loss)
 
-    # seg_met.reset_state()
-    # seg_met.update_state(y, y_pred)
-    # met_value = seg_met.result()
+    seg_met.reset_state()
+    seg_met.update_state(y, y_pred)
+    met_value = seg_met.result()
 
-    met_value = mean_iou(y, y_pred)
-    #iou_background, iou_foreground = class_specific_iou(y, y_pred)
+    accuracy = pixel_accuracy(y, y_pred)
 
-    return loss_value, met_value
+    return loss_value, met_value, accuracy
 
 
 # validation step
@@ -155,24 +149,24 @@ def val_step(x, y):
     y_pred = Unet(x, training=False)
     loss = loss_fun(y, y_pred)
 
-    # seg_met.reset_state()
-    # seg_met.update_state(y, y_pred)
-    # met_value = seg_met.result()
+    seg_met.reset_state()
+    seg_met.update_state(y, y_pred)
+    met_value = seg_met.result()
 
-    met_value = mean_iou(y, y_pred)
-    #iou_background, iou_foreground = class_specific_iou(y, y_pred)
+    accuracy = pixel_accuracy(y, y_pred)
 
-    return loss, met_value
+    return loss, met_value, accuracy
 
 
 def val():
     val_loss = np.zeros(shape = (val_ds_batched.cardinality(), 1))
     val_BA = np.zeros(shape = (val_ds_batched.cardinality(), 1))
+    val_accuracy = np.zeros(shape = (val_ds_batched.cardinality(), 1))
 
     for step, (x, y) in enumerate(val_ds_batched):        
-        val_loss[step], val_BA[step]= val_step(x, y)
+        val_loss[step], val_BA[step], val_accuracy[step]= val_step(x, y)
 
-    return np.mean(val_loss), np.mean(val_BA)
+    return np.mean(val_loss), np.mean(val_BA), np.mean(val_accuracy)
 
 # Training Loop
 
@@ -180,11 +174,14 @@ max_epochs = 120
 
 epoch_train_loss = np.zeros(shape = (max_epochs, 1))
 epoch_train_BA = np.zeros(shape = (max_epochs, 1))
+epoch_train_accuracy = np.zeros(shape = (max_epochs, 1))
 epoch_val_loss = np.zeros(shape = (max_epochs, 1))
 epoch_val_BA = np.zeros(shape = (max_epochs, 1))
+epoch_val_accuracy = np.zeros(shape = (max_epochs, 1))
 
 step_train_loss = np.zeros(shape = (train_ds_batched.cardinality(), 1))
 step_train_BA = np.zeros(shape = (train_ds_batched.cardinality(), 1))
+step_train_accuracy = np.zeros(shape = (train_ds_batched.cardinality(), 1))
 
 for epoch in range(max_epochs):
 
@@ -195,31 +192,35 @@ for epoch in range(max_epochs):
 
     for step, (x, y) in enumerate(train_ds_batched):
 
-        step_train_loss[step], step_train_BA[step] = train_step(x, y)
+        step_train_loss[step], step_train_BA[step], step_train_accuracy[step] = train_step(x, y)
 
     epoch_train_loss[epoch] = np.mean(step_train_loss)
     epoch_train_BA[epoch] = np.mean(step_train_BA)
-
+    epoch_train_accuracy[epoch] = np.mean(step_train_accuracy)
     print("loss = " + str(epoch_train_loss[epoch]))    
     print("mIOU = " + str(epoch_train_BA[epoch]))
+    print("accuracy = " + str(epoch_train_accuracy[epoch]))
 
-    epoch_val_loss[epoch], epoch_val_BA[epoch] = val()
+    epoch_val_loss[epoch], epoch_val_BA[epoch], epoch_val_accuracy[epoch] = val()
 
     
     print("\nval loss = " + str(epoch_val_loss[epoch]))    
     print("val mIOU = " + str(epoch_val_BA[epoch]))
+    print("val accuracy = " + str(epoch_val_accuracy[epoch]))
 
     end_time = time.time()
     print("time = " + str(end_time - start_time) + "\n")
 
 
-Unet.save(filepath = "trained_model_v2.h5")
+Unet.save(filepath = "trained_model_dice.h5")
 
 np.save("train_loss.npy", epoch_train_loss)
 np.save("train_accu.npy", epoch_train_BA)
+np.save("train_pixel_accuracy.npy", epoch_train_accuracy)
 
 np.save("val_loss.npy", epoch_val_loss)
 np.save("val_accu.npy", epoch_val_BA)
+np.save("val_pixel_accuracy.npy", epoch_val_accuracy)
 
 
 
