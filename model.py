@@ -15,7 +15,6 @@ import time
 from PIL import Image
 
 
-
 mixed_precision.set_global_policy("mixed_float16")
 print(mixed_precision.global_policy())
 
@@ -26,7 +25,6 @@ def mish(x):
 # mode definition
 # h = 2048
 # w = 2560
-# Attention Gate
 # Attention Gate
 def attention_gate(x, g, inter_channels):
     
