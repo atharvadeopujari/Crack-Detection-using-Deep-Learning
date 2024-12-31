@@ -27,15 +27,19 @@ def mish(x):
 # h = 2048
 # w = 2560
 # Attention Gate
+# Attention Gate
 def attention_gate(x, g, inter_channels):
-
+    
     theta_x = layers.Conv2D(inter_channels, kernel_size=1, strides=1, padding="same")(x)
     phi_g = layers.Conv2D(inter_channels, kernel_size=1, strides=1, padding="same")(g)
-    add = layers.Add()([theta_x, phi_g])
+    # Wrap resizing in a Lambda layer
+    g_resized = layers.Lambda(lambda inputs: tf.image.resize(inputs[0], tf.shape(inputs[1])[1:3], method="bilinear"))([phi_g, x])
+    add = layers.Add()([theta_x, g_resized])
     relu = layers.Activation('relu')(add)
     psi = layers.Conv2D(1, kernel_size=1, strides=1, padding="same")(relu)
     psi = layers.Activation('sigmoid')(psi)
-    return layers.Multiply()([x, psi])  # Multiply the input by the attention map
+    return layers.Multiply()([x, psi])
+
 
 # Model Dimensions
 h = None
@@ -97,3 +101,4 @@ img_out = layers.Conv2D(1, kernel_size=1, activation="sigmoid")(u1)
 Attention_Unet = models.Model(inputs=img_in, outputs=img_out, name="Attention-UNet")
 Attention_Unet.summary()
 #Attention_Unet.save("Attention_Unet_untrained.h5")
+

@@ -68,13 +68,6 @@ def dice_loss(y_true, y_pred, smooth=1):
     intersection = tf.reduce_sum(y_true_f * y_pred_f)
     return 1 - (2. * intersection + smooth) / (tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
 
-def boundary_loss(y_true, y_pred, smooth=1e-6):
-    y_true_grad = tf.image.sobel_edges(y_true)  # Approximate boundary using gradients
-    y_pred_grad = tf.image.sobel_edges(y_pred)
-    intersection = tf.reduce_sum(y_true_grad * y_pred_grad)
-    total = tf.reduce_sum(y_true_grad) + tf.reduce_sum(y_pred_grad)
-    return 1 - (2 * intersection + smooth) / (total + smooth)
-
 
 def loss_fun(y, y_pred):
     
