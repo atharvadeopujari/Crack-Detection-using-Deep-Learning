@@ -7,6 +7,10 @@ from keras import mixed_precision
 mixed_precision.set_global_policy("mixed_float16")
 print(mixed_precision.global_policy())
 
+def one_hot_encode_mask(mask, num_classes=2):
+
+    mask = tf.cast(mask, tf.int32)
+    return tf.one_hot(mask, depth=num_classes, axis=-1)
 
 # Data augmentation
 def data_aug(img, mask):
@@ -54,6 +58,9 @@ def mask_read_fun(filename):
     
     # Ensure binary values (0 or 1)
     mask = tf.math.round(mask)
+
+    # One-hot encode the mask
+    mask = one_hot_encode_mask(mask, num_classes=2)
     
     return mask
 
