@@ -68,6 +68,28 @@ def dice_loss(y_true, y_pred, smooth=1):
     intersection = tf.reduce_sum(y_true_f * y_pred_f)
     return 1 - (2. * intersection + smooth) / (tf.reduce_sum(y_true_f) + tf.reduce_sum(y_pred_f) + smooth)
 
+def focal_loss(y_true, y_pred, alpha=0.25, gamma=2.0):
+    y_pred = tf.clip_by_value(y_pred, 1e-7, 1 - 1e-7)
+    bce = -y_true * tf.math.log(y_pred) - (1 - y_true) * tf.math.log(1 - y_pred)
+    weight = alpha * tf.pow(1 - y_pred, gamma) * y_true + (1 - alpha) * tf.pow(y_pred, gamma) * (1 - y_true)
+    return tf.reduce_mean(weight * bce)
+
+def tversky_loss(y_true, y_pred, alpha=0.7, beta=0.3, smooth=1):
+    # Flatten tensors for simplicity
+    y_true_f = tf.reshape(y_true, [-1])
+    y_pred_f = tf.reshape(y_pred, [-1])
+
+    # True positives, false positives, and false negatives
+    tp = tf.reduce_sum(y_true_f * y_pred_f)
+    fp = tf.reduce_sum((1 - y_true_f) * y_pred_f)
+    fn = tf.reduce_sum(y_true_f * (1 - y_pred_f))
+
+    # Tversky index
+    tversky_index = (tp + smooth) / (tp + alpha * fp + beta * fn + smooth)
+
+    # Tversky loss
+    tversky_loss_value = 1 - tversky_index
+    return tversky_loss_value
 
 def loss_fun(y, y_pred):
     
@@ -83,7 +105,8 @@ def loss_fun(y, y_pred):
     return total_loss
 #bce_loss = keras.losses.binary_crossentropy(y, y_pred)
 #bce_loss = keras.losses.BinaryCrossentropy()
-# loss_fun = bce_loss
+# focal_loss = keras.losses.BinaryFocalCrossentropy(from_logits=False)
+# loss_fun = focal_loss
 
 # Loss Function
 # def loss_fun(y, y_pred):
