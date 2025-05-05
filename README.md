@@ -89,6 +89,8 @@ The project experimented with four loss functions:
 
 ## Results
 
+![Crack Detection Result](Images%20for%20Report/1401.png)
+*Figure: Comparision of different models*
 
 |Loss Function |Training mIoU |Validation mIoU |Train Loss |Validation Loss |Train Accuracy |Validation Accuracy |
 | - | :- | :- | :- | :- | :- | :- |
